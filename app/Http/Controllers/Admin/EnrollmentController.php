@@ -7,8 +7,8 @@ use App\Models\Courses;
 use App\Models\Enrollment;
 use App\Models\Student;
 use Illuminate\Http\Request;
-use Illuminate\Http\StreamedResponse;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EnrollmentController extends Controller
 {
