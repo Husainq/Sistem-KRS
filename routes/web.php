@@ -66,6 +66,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         ->name('admin.enrollments.index');
     Route::post('/enrollments', [EnrollmentController::class, 'store'])
         ->name('admin.enrollments.store');
+    Route::post('/krs', [EnrollmentController::class, 'storeKrs'])
+        ->name('admin.krs.store');
     Route::put('/enrollments/{enrollment}', [EnrollmentController::class, 'update'])
         ->name('admin.enrollments.update');
     Route::delete('/enrollments/{enrollment}', [EnrollmentController::class, 'destroy'])

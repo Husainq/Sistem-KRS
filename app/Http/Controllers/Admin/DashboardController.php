@@ -29,6 +29,7 @@ class DashboardController extends Controller
                 ->latest()
                 ->limit(8)
                 ->get(),
+            'success' => session('success'),
         ]);
     }
 }

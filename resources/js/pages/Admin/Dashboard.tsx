@@ -1,7 +1,11 @@
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
-import { Head, Link } from '@inertiajs/react';
-import { BookOpen, ClipboardList, GraduationCap, Users } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { BookOpen, ClipboardList, GraduationCap, Plus, Users } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface RecentEnrollment {
     id: number;
@@ -16,6 +20,7 @@ interface Props {
     summary: { students: number; courses: number; enrollments: number; pendingEnrollments: number };
     statusCounts: { draft: number; submitted: number; approved: number; rejected: number };
     recentEnrollments: RecentEnrollment[];
+    success?: string;
 }
 
 const statusStyles: Record<string, string> = {
@@ -25,15 +30,79 @@ const statusStyles: Record<string, string> = {
     REJECTED: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200',
 };
 
-export default function Dashboard({ summary, statusCounts, recentEnrollments }: Props) {
+export default function Dashboard({ summary, statusCounts, recentEnrollments, success }: Props) {
+    const [open, setOpen] = useState(false);
+    const form = useForm({
+        nim: '',
+        student_name: '',
+        student_email: '',
+        course_code: '',
+        course_name: '',
+        credits: '3',
+        academic_year: '',
+        semester: 'GANJIL',
+        status: 'DRAFT',
+    });
+
+    const submit = (event: React.FormEvent) => {
+        event.preventDefault();
+        form.post('/admin/krs', {
+            onSuccess: () => {
+                form.reset();
+                setOpen(false);
+            },
+        });
+    };
+
     return (
         <AppLayout>
             <Head title="Dashboard Admin" />
             <div className="space-y-6 p-6">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Dashboard Admin</h1>
-                    <p className="text-sm text-muted-foreground">Ringkasan data akademik dan aktivitas KRS terbaru.</p>
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight">Dashboard Admin</h1>
+                        <p className="text-sm text-muted-foreground">Ringkasan data akademik dan aktivitas KRS terbaru.</p>
+                    </div>
+                    <Dialog open={open} onOpenChange={setOpen}>
+                        <DialogTrigger asChild>
+                            <Button type="button" onClick={() => { form.reset(); setOpen(true); }}><Plus />Create KRS</Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[620px]">
+                            <DialogHeader>
+                                <DialogTitle>Create KRS Baru</DialogTitle>
+                            </DialogHeader>
+                            <form onSubmit={submit} className="space-y-5 pt-4">
+                                <section className="space-y-3">
+                                    <div><h3 className="font-semibold">Data Mahasiswa</h3><p className="text-sm text-muted-foreground">Akun mahasiswa dibuat otomatis untuk data baru ini.</p></div>
+                                    <div className="grid gap-3 sm:grid-cols-2">
+                                        <Field label="NIM"><Input value={form.data.nim} onChange={(event) => form.setData('nim', event.target.value)} required />{form.errors.nim && <ErrorText>{form.errors.nim}</ErrorText>}</Field>
+                                        <Field label="Nama"><Input value={form.data.student_name} onChange={(event) => form.setData('student_name', event.target.value)} required />{form.errors.student_name && <ErrorText>{form.errors.student_name}</ErrorText>}</Field>
+                                    </div>
+                                    <Field label="Email"><Input type="email" value={form.data.student_email} onChange={(event) => form.setData('student_email', event.target.value)} required />{form.errors.student_email && <ErrorText>{form.errors.student_email}</ErrorText>}</Field>
+                                </section>
+                                <section className="space-y-3 border-t pt-4">
+                                    <div><h3 className="font-semibold">Data Mata Kuliah</h3><p className="text-sm text-muted-foreground">Masukkan mata kuliah yang akan diambil.</p></div>
+                                    <div className="grid gap-3 sm:grid-cols-[180px_1fr]">
+                                        <Field label="Kode"><Input value={form.data.course_code} onChange={(event) => form.setData('course_code', event.target.value.toUpperCase())} placeholder="IF101" required />{form.errors.course_code && <ErrorText>{form.errors.course_code}</ErrorText>}</Field>
+                                        <Field label="Nama Mata Kuliah"><Input value={form.data.course_name} onChange={(event) => form.setData('course_name', event.target.value)} required />{form.errors.course_name && <ErrorText>{form.errors.course_name}</ErrorText>}</Field>
+                                    </div>
+                                    <Field label="SKS"><Input type="number" min="1" max="6" value={form.data.credits} onChange={(event) => form.setData('credits', event.target.value)} required />{form.errors.credits && <ErrorText>{form.errors.credits}</ErrorText>}</Field>
+                                </section>
+                                <section className="space-y-3 border-t pt-4">
+                                    <div><h3 className="font-semibold">Data Enrollment</h3><p className="text-sm text-muted-foreground">Semua data akan disimpan dalam satu transaksi.</p></div>
+                                    <Field label="Tahun Akademik"><Input placeholder="2025/2026" pattern="[0-9]{4}/[0-9]{4}" value={form.data.academic_year} onChange={(event) => form.setData('academic_year', event.target.value)} required />{form.errors.academic_year && <ErrorText>{form.errors.academic_year}</ErrorText>}</Field>
+                                    <div className="grid gap-3 sm:grid-cols-2">
+                                        <Field label="Semester"><Select value={form.data.semester} onChange={(value) => form.setData('semester', value)} options={['GANJIL', 'GENAP']} /></Field>
+                                        <Field label="Status"><Select value={form.data.status} onChange={(value) => form.setData('status', value)} options={['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED']} /></Field>
+                                    </div>
+                                </section>
+                                <div className="flex justify-end gap-2 border-t pt-4"><Button type="button" variant="outline" onClick={() => setOpen(false)}>Batal</Button><Button type="submit" disabled={form.processing}>{form.processing ? 'Menyimpan...' : 'Simpan Semua Data'}</Button></div>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
                 </div>
+
+                {success && <div role="status" className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">{success}</div>}
 
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <StatCard label="Total Mahasiswa" value={summary.students} icon={<Users />} href="/admin/mahasiswa" />
@@ -64,4 +133,16 @@ function StatCard({ label, value, icon, href }: { label: string; value: number; 
 
 function StatusRow({ label, value, color }: { label: string; value: number; color: string }) {
     return <div className="flex items-center justify-between text-sm"><div className="flex items-center gap-2"><span className={`size-2 rounded-full ${color}`} />{label}</div><span className="font-semibold tabular-nums">{value.toLocaleString('id-ID')}</span></div>;
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+    return <div className="space-y-1"><Label>{label}</Label>{children}</div>;
+}
+
+function Select({ value, onChange, options }: { value: string; onChange: (value: string) => void; options: string[] }) {
+    return <select value={value} onChange={(event) => onChange(event.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">{options.map((option) => <option key={option}>{option}</option>)}</select>;
+}
+
+function ErrorText({ children }: { children: React.ReactNode }) {
+    return <p className="text-xs text-destructive">{children}</p>;
 }

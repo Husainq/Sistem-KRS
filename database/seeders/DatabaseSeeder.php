@@ -40,5 +40,10 @@ class DatabaseSeeder extends Seeder
             'name' => $mahasiswa->name,
             'email' => $mahasiswa->email,
         ]);
+
+        $this->call([
+            CourseSeeder::class,
+            EnrollmentSeeder::class,
+        ]);
     }
 }
