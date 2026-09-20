@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 -- Instalasi --
 
 1. ```bash
@@ -42,6 +43,14 @@ php artisan db:seed
 Pastikan database memiliki storage dan waktu eksekusi yang cukup. Untuk uji cepat, gunakan `ENROLLMENT_SEED_COUNT=500`.
 
 -- STACK --
+=======
+-- LIVE DEMO --
+1. https://project-production-6a22.up.railway.app/login
+2. gmail: admin@gmail.com
+3. pass : password123
+
+-- STACK -- 
+>>>>>>> de0817fde79ff275a378f095d9edb9a631003051
 1. Laravel 12
 2. PHP 8.2
 3. Inertia.js v2
