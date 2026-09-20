@@ -11,7 +11,7 @@ class EnrollmentSeeder extends Seeder
 {
     public function run(): void
     {
-        $target = (int) env('ENROLLMENT_SEED_COUNT', 5_000_000);
+        $target = (int) env('ENROLLMENT_SEED_COUNT', 500);
         $chunkSize = 25_000;
         $studentCount = Student::count();
         $courseCount = Courses::count();

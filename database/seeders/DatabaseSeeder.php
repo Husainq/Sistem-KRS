@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Student;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,32 +14,33 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create an admin account and a mahasiswa account for testing (idempotent)
         User::updateOrCreate([
             'email' => 'admin@example.com',
         ], [
             'name' => 'Admin User',
             'email_verified_at' => now(),
-            'password' => bcrypt('password'),
+            'password' => Hash::make('password'),
             'role' => 'admin',
         ]);
 
-        $mahasiswa = User::updateOrCreate([
-            'email' => 'mahasiswa@example.com',
-        ], [
-            'name' => 'Mahasiswa User',
-            'email_verified_at' => now(),
-            'password' => bcrypt('password'),
-            'role' => 'mahasiswa',
-        ]);
+        for ($index = 1; $index <= 9; $index++) {
+            $mahasiswa = User::updateOrCreate([
+                'email' => "mahasiswa{$index}@example.com",
+            ], [
+                'name' => "Mahasiswa {$index}",
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
+                'role' => 'mahasiswa',
+            ]);
 
-        Student::updateOrCreate([
-            'user_id' => $mahasiswa->id,
-        ], [
-            'nim' => '20250001',
-            'name' => $mahasiswa->name,
-            'email' => $mahasiswa->email,
-        ]);
+            Student::updateOrCreate([
+                'user_id' => $mahasiswa->id,
+            ], [
+                'nim' => sprintf('2025%04d', $index),
+                'name' => $mahasiswa->name,
+                'email' => $mahasiswa->email,
+            ]);
+        }
 
         $this->call([
             CourseSeeder::class,

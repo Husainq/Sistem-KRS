@@ -11,7 +11,7 @@ class CourseSeeder extends Seeder
     {
         $courses = [];
 
-        for ($index = 1; $index <= 60; $index++) {
+        for ($index = 1; $index <= 10; $index++) {
             $courses[] = [
                 'code' => sprintf('IF%03d', $index),
                 'name' => "Mata Kuliah Informatika {$index}",
