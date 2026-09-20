@@ -42,7 +42,6 @@ php artisan db:seed
 
 Pastikan database memiliki storage dan waktu eksekusi yang cukup. Untuk uji cepat, gunakan `ENROLLMENT_SEED_COUNT=500`.
 
--- STACK --
 =======
 -- LIVE DEMO --
 1. https://project-production-6a22.up.railway.app/login
