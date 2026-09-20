@@ -10,7 +10,8 @@ declare global {
     const route: typeof routeFn;
 }
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const configuredAppName = import.meta.env.VITE_APP_NAME;
+const appName = configuredAppName && !configuredAppName.includes('${') ? configuredAppName : 'Sistem Akademik';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
