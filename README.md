@@ -1,3 +1,8 @@
+-- LIVE DEMO --
+1. https://project-production-6a22.up.railway.app/login
+2. gmail: admin@gmail.com
+3. pass : password123
+
 -- STACK -- 
 1. Laravel 12
 2. PHP 8.2
