@@ -1,4 +1,47 @@
--- STACK -- 
+-- Instalasi --
+
+1. ```bash
+2. composer install
+3. npm install
+4. copy .env.example .env
+5. php artisan key:generate
+```
+
+-- Atur koneksi database pada `.env`, lalu jalankan --
+
+1. ```bash
+2. php artisan migrate
+3. php artisan db:seed
+4. npm run build
+5. php artisan serve
+```
+
+-- Akun admin demo --
+
+https://project-production-6a22.up.railway.app/login
+
+| Email | Password |
+| --- | --- |
+| `admin@example.com` | `password` |
+| `admin@gmail.com` | `password123` |
+
+-- Seed 5 Juta Enrollment -- 
+
+Seeder besar memakai insert server-side per chunk. Set jumlah data di `.env` sebelum menjalankan seeder:
+
+```dotenv
+ENROLLMENT_SEED_COUNT=5000000
+```
+
+Kemudian jalankan:
+
+```bash
+php artisan db:seed
+```
+
+Pastikan database memiliki storage dan waktu eksekusi yang cukup. Untuk uji cepat, gunakan `ENROLLMENT_SEED_COUNT=500`.
+
+-- STACK --
 1. Laravel 12
 2. PHP 8.2
 3. Inertia.js v2
